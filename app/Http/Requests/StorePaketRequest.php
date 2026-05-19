@@ -20,9 +20,9 @@ class StorePaketRequest extends FormRequest
             'jumlah_pax' => 'required|integer|min:1',
             'harga_paket' => 'required|integer|min:0',
             'deskripsi' => 'nullable|string',
-            'foto1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'foto2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'foto3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto1' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto2' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto3' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 
@@ -33,9 +33,11 @@ class StorePaketRequest extends FormRequest
             'jenis.required' => 'Jenis paket wajib dipilih',
             'kategori.required' => 'Kategori wajib dipilih',
             'jumlah_pax.required' => 'Jumlah pax wajib diisi',
+            'jumlah_pax.integer' => 'Jumlah pax harus berupa angka',
             'harga_paket.required' => 'Harga paket wajib diisi',
-            'foto1.image' => 'Foto harus berupa gambar',
-            'foto1.max' => 'Ukuran foto maksimal 2MB',
+            'harga_paket.integer' => 'Harga harus berupa angka',
+            'foto1.image' => 'File harus berupa gambar',
+            'foto1.max' => 'Ukuran gambar maksimal 2MB',
         ];
     }
 }

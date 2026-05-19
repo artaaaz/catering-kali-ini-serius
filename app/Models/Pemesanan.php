@@ -2,36 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pemesanan extends Model
 {
-    use HasFactory;
-
-    protected $guarded = ['id'];
-
-    protected $casts = [
-        'tgl_pesan' => 'datetime',
+    protected $table = 'pemesanans';
+    
+    protected $fillable = [
+        'id_pelanggan',
+        'id_jenis_bayar',
+        'tgl_pesan',
+        'status_pesan',
+        'total_bayar',
+        'no_resi',
+        'alamat1',
+        'tgl_acara',
     ];
 
+    // Relasi ke Pelanggan
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
     }
 
-    public function jenisPembayaran()
+    // Relasi ke Paket (melalui detail_pemesanan atau langsung)
+    public function paket()
     {
-        return $this->belongsTo(JenisPembayaran::class, 'id_jenis_bayar');
-    }
-
-    public function details()
-    {
-        return $this->hasMany(DetailPemesanan::class, 'id_pemesanan');
-    }
-
-    public function pengiriman()
-    {
-        return $this->hasOne(Pengiriman::class, 'id_pemesanan');
+        // Kalau pakai tabel pivot/detail_pemesanan:
+        // return $this->belongsToMany(Paket::class, 'detail_pemesanans', 'id_pemesanan', 'id_paket');
+        
+        // Kalau langsung (sederhana):
+        return $this->belongsTo(Paket::class, 'id_paket'); // Sesuaikan dengan struktur database kamu
     }
 }
+

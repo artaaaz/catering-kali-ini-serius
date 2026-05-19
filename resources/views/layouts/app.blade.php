@@ -12,10 +12,10 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Scripts -->
+    <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- SweetAlert2 -->
+    
+    <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="font-poppins antialiased bg-gray-50">
@@ -32,35 +32,41 @@
             </header>
         @endif
 
-        <!-- Page Content -->
+        <!-- Page Content (INI YANG PENTING!) -->
         <main>
             {{ $slot }}
         </main>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast Notification Scripts (DI AKHIR BODY) -->
     @if(session('success'))
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            timer: 3000,
-            showConfirmButton: false,
-            position: 'top-end',
-            toast: true
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
         });
     </script>
     @endif
 
     @if(session('error'))
     <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: '{{ session('error') }}',
-            timer: 3000,
-            showConfirmButton: false
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '{{ session('error') }}',
+                timer: 5000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
         });
     </script>
     @endif
