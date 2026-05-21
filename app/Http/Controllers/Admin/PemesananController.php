@@ -10,13 +10,21 @@ class PemesananController extends Controller
 {
     public function index()
     {
-        $pemesanans = Pemesanan::with(['pelanggan', 'paket'])->latest()->paginate(10);
+        $pemesanans = Pemesanan::with([
+            'pelanggan',
+            'pakets'
+        ])->latest()->paginate(10);
+
         return view('admin.pemesanans.index', compact('pemesanans'));
     }
 
     public function show($id)
     {
-        $pemesanan = Pemesanan::with(['pelanggan', 'paket'])->findOrFail($id);
+        $pemesanan = Pemesanan::with([
+            'pelanggan',
+            'pakets'
+        ])->findOrFail($id);
+
         return view('admin.pemesanans.show', compact('pemesanan'));
     }
 
@@ -27,7 +35,10 @@ class PemesananController extends Controller
         ]);
 
         $pemesanan = Pemesanan::findOrFail($id);
-        $pemesanan->update(['status_pesan' => $request->status_pesan]);
+
+        $pemesanan->update([
+            'status_pesan' => $request->status_pesan
+        ]);
 
         return back()->with('success', 'Status berhasil diupdate!');
     }

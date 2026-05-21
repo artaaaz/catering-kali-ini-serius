@@ -8,13 +8,13 @@ class Pengiriman extends Model
 {
     // ⚠️ PENTING: Sesuaikan dengan nama tabel di database kamu
     protected $table = 'pengirimans';  // ← Pakai 'pengirimans' (plural)
-    
+
     protected $fillable = [
         'id_pemesanan',
         'id_kurir',
         'status_kirim',
         'bukti_foto',
-        'resi_number',
+        'resi_number',  
         'tgl_kirim',
         'tgl_sampai',
     ];

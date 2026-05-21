@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pemesanan extends Model
 {
     protected $table = 'pemesanans';
-    
+
     protected $fillable = [
         'id_pelanggan',
         'id_jenis_bayar',
@@ -19,20 +19,20 @@ class Pemesanan extends Model
         'tgl_acara',
     ];
 
-    // Relasi ke Pelanggan
+    // Relasi pelanggan
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
     }
 
-    // Relasi ke Paket (melalui detail_pemesanan atau langsung)
-    public function paket()
+    // Relasi paket (many to many)
+    public function pakets()
     {
-        // Kalau pakai tabel pivot/detail_pemesanan:
-        // return $this->belongsToMany(Paket::class, 'detail_pemesanans', 'id_pemesanan', 'id_paket');
-        
-        // Kalau langsung (sederhana):
-        return $this->belongsTo(Paket::class, 'id_paket'); // Sesuaikan dengan struktur database kamu
+        return $this->belongsToMany(
+            Paket::class,
+            'detail_pemesanans',
+            'id_pemesanan',
+            'id_paket'
+        );
     }
 }
-

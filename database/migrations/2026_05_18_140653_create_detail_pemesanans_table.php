@@ -10,9 +10,12 @@ return new class extends Migration
     {
         Schema::create('detail_pemesanans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_pemesanan')->constrained('pemesanans')->cascadeOnDelete();
-            $table->foreignId('id_paket')->constrained('pakets')->cascadeOnDelete();
-            $table->bigInteger('subtotal');
+
+            $table->unsignedBigInteger('id_pemesanan');
+            $table->unsignedBigInteger('id_paket');
+
+            $table->integer('qty')->default(1);
+
             $table->timestamps();
         });
     }

@@ -10,12 +10,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Pastikan menggunakan Model Pengiriman (bukan query langsung)
+        // ✅ PAKAI MODEL Pengiriman (bukan query langsung ke tabel)
         $pengirimans = Pengiriman::with(['pemesanan.pelanggan', 'kurir'])
             ->whereIn('status_kirim', ['Sedang Dikirim', 'Menunggu Kurir'])
             ->latest()
             ->paginate(10);
-            
+
         return view('kurir.dashboard', compact('pengirimans'));
     }
 
@@ -27,7 +27,7 @@ class DashboardController extends Controller
 
         $pengiriman = Pengiriman::findOrFail($id);
         $pengiriman->update(['status_kirim' => $request->status]);
-        
+
         return back()->with('success', 'Status diupdate!');
     }
 
@@ -40,7 +40,7 @@ class DashboardController extends Controller
         $pengiriman = Pengiriman::findOrFail($id);
         $path = $request->file('bukti_foto')->store('bukti-pengiriman', 'public');
         $pengiriman->update(['bukti_foto' => $path]);
-        
+
         return back()->with('success', 'Bukti berhasil diupload!');
     }
 }

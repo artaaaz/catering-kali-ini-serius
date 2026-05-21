@@ -76,7 +76,7 @@
                         <!-- Deskripsi -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                            <textarea name="deskripsi" rows="4" 
+                            <textarea name="deskripsi" rows="4"
                                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 @error('deskripsi') border-red-500 @enderror">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -86,11 +86,11 @@
                         <!-- Upload Foto -->
                         <div class="space-y-4">
                             <h4 class="text-md font-semibold text-gray-800">Upload Foto Paket</h4>
-                            
+
                             <!-- Foto 1 -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Foto Utama</label>
-                                <input type="file" name="foto1" id="foto1" accept="image/*" 
+                                <input type="file" name="foto1" id="foto1" accept="image/*"
                                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 @error('foto1') border-red-500 @enderror"
                                     onchange="previewImage(this, 'preview1')">
                                 <img id="preview1" class="mt-2 w-32 h-32 object-cover rounded-lg hidden">
@@ -102,7 +102,7 @@
                             <!-- Foto 2 -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Foto 2</label>
-                                <input type="file" name="foto2" id="foto2" accept="image/*" 
+                                <input type="file" name="foto2" id="foto2" accept="image/*"
                                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 @error('foto2') border-red-500 @enderror"
                                     onchange="previewImage(this, 'preview2')">
                                 <img id="preview2" class="mt-2 w-32 h-32 object-cover rounded-lg hidden">
@@ -114,7 +114,7 @@
                             <!-- Foto 3 -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Foto 3</label>
-                                <input type="file" name="foto3" id="foto3" accept="image/*" 
+                                <input type="file" name="foto3" id="foto3" accept="image/*"
                                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 @error('foto3') border-red-500 @enderror"
                                     onchange="previewImage(this, 'preview3')">
                                 <img id="preview3" class="mt-2 w-32 h-32 object-cover rounded-lg hidden">
@@ -126,11 +126,11 @@
 
                         <!-- Buttons -->
                         <div class="flex justify-end gap-3 pt-4">
-                            <a href="{{ route('admin.pakets.index') }}" 
+                            <a href="{{ route('admin.pakets.index') }}"
                                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
                                 Batal
                             </a>
-                            <button type="submit" 
+                            <button type="submit"
                                 class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition">
                                 Simpan Paket
                             </button>
@@ -140,7 +140,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Image Preview Script -->
     <script>
         function previewImage(input, previewId) {

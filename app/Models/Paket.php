@@ -15,4 +15,15 @@ class Paket extends Model
     {
         return $this->hasMany(DetailPemesanan::class, 'id_paket');
     }
+
+    public function pemesanans()
+    {
+        return $this->belongsToMany(
+            Pemesanan::class,
+            'detail_pemesanans',
+            'id_paket',
+            'id_pemesanan'
+        );
+    }
+
 }

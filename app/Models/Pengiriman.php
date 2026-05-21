@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pengiriman extends Model
 {
-    protected $table = 'pengirimans'; // ← HARUS 'pengirimans' (bukan 'pengirimen')
-    
+    // ✅ PENTING: Nama tabel di database adalah 'pengirimans' (plural)
+    protected $table = 'pengirimans';
+
     protected $fillable = [
         'id_pemesanan',
         'id_user',
@@ -15,6 +16,11 @@ class Pengiriman extends Model
         'tgl_tiba',
         'status_kirim',
         'bukti_foto',
+    ];
+
+    protected $casts = [
+        'tgl_kirim' => 'datetime',
+        'tgl_tiba' => 'datetime',
     ];
 
     public function pemesanan()

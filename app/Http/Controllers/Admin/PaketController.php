@@ -30,29 +30,24 @@ class PaketController extends Controller
         return view('admin.pakets.create');
     }
 
-    public function store(StorePaketRequest $request)
+    public function store(Request $request, PaketService $service)
     {
-        try {
-            $data = $request->validated();
-            
-            // Handle upload foto
-            if ($request->hasFile('foto1')) {
-                $data['foto1'] = $request->file('foto1')->store('pakets', 'public');
-            }
-            if ($request->hasFile('foto2')) {
-                $data['foto2'] = $request->file('foto2')->store('pakets', 'public');
-            }
-            if ($request->hasFile('foto3')) {
-                $data['foto3'] = $request->file('foto3')->store('pakets', 'public');
-            }
+        $validated = $request->validate([
+            'nama_paket' => 'required|string|max:255',
+            'jenis' => 'required|in:Prasmanan,Box',
+            'kategori' => 'required|string',
+            'jumlah_pax' => 'required|integer|min:1',
+            'harga_paket' => 'required|numeric|min:0',
+            'deskripsi' => 'nullable|string',
+            'foto1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-            $this->paketService->createPaket($data);
+        // ✅ Kirim $request->all() atau $validated ke service
+        $paket = $service->createPaket($request->all());
 
-            return redirect()->route('admin.pakets.index')
-                ->with('success', 'Paket berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menambah paket: ' . $e->getMessage());
-        }
+        return redirect()->route('admin.pakets.index')->with('success', 'Paket berhasil ditambahkan!');
     }
 
     public function show($id)
