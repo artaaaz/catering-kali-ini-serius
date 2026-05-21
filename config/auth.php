@@ -73,6 +73,18 @@ return [
         // ],
     ],
 
+
+    'pelanggan' => [
+        'driver' => 'session',
+        'provider' => 'pelanggans',
+    ],
+
+    // Di dalam array 'providers'
+    'pelanggans' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Pelanggan::class,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

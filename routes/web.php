@@ -11,6 +11,7 @@ use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboard;
 use App\Http\Controllers\Pelanggan\PaketController as PelangganPaket;
 use App\Http\Controllers\Pelanggan\PemesananController as PelangganPemesanan;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Pelanggan\PemesananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,5 +86,32 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/pesan', [\App\Http\Controllers\Pelanggan\PemesananController::class, 'create'])->name('pesan.create');
+Route::post('/pesan', [\App\Http\Controllers\Pelanggan\PemesananController::class, 'store'])->name('pesan.store');
+Route::get('/riwayat', [\App\Http\Controllers\Pelanggan\PemesananController::class, 'riwayat'])->name('riwayat');
+Route::get('/pemesanan/{pemesanan}', [\App\Http\Controllers\Pelanggan\PemesananController::class, 'show'])->name('pemesanan.show');
+
+Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Owner\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/laporan-pdf', [\App\Http\Controllers\Owner\DashboardController::class, 'exportPdf'])->name('laporan.pdf');
+});
+
+
+// Route untuk pelanggan (pakai guard pelanggan)
+Route::middleware(['auth:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    Route::get('/riwayat', [PemesananController::class, 'riwayat'])->name('riwayat');
+});
+
+Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
+    $user = auth()->user();
+    
+    return match ($user->level ?? null) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'owner' => redirect()->route('owner.dashboard'),
+        'kurir' => redirect()->route('kurir.dashboard'),
+        'pelanggan' => redirect()->route('pelanggan.riwayat'),  // ← Redirect pelanggan
+        default => view('dashboard'),
+    };
+})->name('dashboard');
 
 require __DIR__.'/auth.php';

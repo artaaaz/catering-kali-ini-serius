@@ -1,59 +1,32 @@
 <?php
-
 namespace App\Http\Controllers\Owner;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Pemesanan;
+use App\Models\Paket;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Statistik Real-time
-        $totalPendapatan = DB::table('pemesanans')
-            ->where('status_pesan', 'Lunas')
-            ->sum('total_bayar');
-        
-        $totalPesanan = DB::table('pemesanans')->count();
-        $totalPaket = DB::table('pakets')->count();
-        $pesananProses = DB::table('pemesanans')
-            ->whereIn('status_pesan', ['Menunggu Konfirmasi', 'Sedang Diproses'])
-            ->count();
-
-        // Data Chart: Pendapatan Bulanan (6 bulan terakhir)
-        $monthlyRevenue = DB::table('pemesanans')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total_bayar) as total'))
-            ->where('status_pesan', 'Lunas')
-            ->groupBy('month')
-            ->orderBy('month', 'asc')
-            ->get()
-            ->pluck('total', 'month')
-            ->toArray();
-
-        // Lengkapi array 1-12 biar chart rapi
-        $chartData = array_fill(1, 12, 0);
-        foreach($monthlyRevenue as $m => $t) { $chartData[$m] = $t; }
-
-        return view('owner.dashboard', compact('totalPendapatan', 'totalPesanan', 'totalPaket', 'pesananProses', 'chartData'));
+        $stats = [
+            'total_pesanan' => Pemesanan::count(),
+            'pendapatan_bulan_ini' => Pemesanan::whereMonth('created_at', now()->month)
+                ->where('status_pesan', 'Selesai')
+                ->sum('total_bayar'),
+            'paket_terlaris' => Paket::withCount('pemesanans')
+                ->orderByDesc('pemesanans_count')
+                ->first(),
+        ];
+        return view('owner.dashboard', compact('stats'));
     }
 
     public function exportPdf()
     {
-        $pemesanans = DB::table('pemesanans')
-            ->join('pelanggans', 'pemesanans.id_pelanggan', '=', 'pelanggans.id')
-            ->select('pemesanans.*', 'pelanggans.nama_pelanggan')
-            ->latest()
-            ->get();
-
-        $pdf = Pdf::loadView('owner.pdf.laporan', compact('pemesanans'));
-        return $pdf->download('laporan-pemesanan-' . now()->format('d-m-Y') . '.pdf');
-    }
-
-    public function stats()
-    {
-        return redirect()->route('owner.dashboard');
+        // Simple: return view PDF atau redirect ke halaman print-friendly
+        return view('owner.laporan-pdf', [
+            'pemesanans' => Pemesanan::with(['pelanggan', 'pakets'])->latest()->get()
+        ]);
     }
 }
 

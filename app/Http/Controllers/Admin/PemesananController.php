@@ -30,15 +30,13 @@ class PemesananController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+        // ✅ VALIDASI HARUS SAMA PERSIS DENGAN ENUM DI DATABASE (PDM)
         $request->validate([
-            'status_pesan' => 'required|in:Menunggu Konfirmasi,Diproses,Selesai,Dibatalkan'
+            'status_pesan' => 'required|in:Menunggu Konfirmasi,Sedang Diproses,Menunggu Kurir'
         ]);
 
         $pemesanan = Pemesanan::findOrFail($id);
-
-        $pemesanan->update([
-            'status_pesan' => $request->status_pesan
-        ]);
+        $pemesanan->update(['status_pesan' => $request->status_pesan]);
 
         return back()->with('success', 'Status berhasil diupdate!');
     }

@@ -1,38 +1,27 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Pengiriman extends Model
+return new class extends Migration
 {
-    // ⚠️ PENTING: Sesuaikan dengan nama tabel di database kamu
-    protected $table = 'pengirimans';  // ← Pakai 'pengirimans' (plural)
-
-    protected $fillable = [
-        'id_pemesanan',
-        'id_kurir',
-        'status_kirim',
-        'bukti_foto',
-        'resi_number',  
-        'tgl_kirim',
-        'tgl_sampai',
-    ];
-
-    protected $casts = [
-        'tgl_kirim' => 'datetime',
-        'tgl_sampai' => 'datetime',
-    ];
-
-    // Relasi ke Pemesanan
-    public function pemesanan()
+    public function up(): void
     {
-        return $this->belongsTo(Pemesanan::class, 'id_pemesanan');
+        Schema::create('pengirimans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_pemesanan')->constrained('pemesanans')->cascadeOnDelete();
+            $table->foreignId('id_user')->nullable()->constrained('users')->nullOnDelete();
+            $table->dateTime('tgl_kirim');
+            $table->dateTime('tgl_tiba')->nullable();
+            $table->enum('status_kirim', ['Menunggu Kurir', 'Sedang Dikirim', 'Tiba Ditujukan'])->default('Menunggu Kurir');
+            $table->string('bukti_foto')->nullable();
+            $table->timestamps();
+        });
     }
 
-    // Relasi ke Kurir (User)
-    public function kurir()
+    public function down(): void
     {
-        return $this->belongsTo(User::class, 'id_kurir');
+        Schema::dropIfExists('pengirimans');
     }
-}
+};

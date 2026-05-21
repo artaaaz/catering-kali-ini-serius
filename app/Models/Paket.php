@@ -2,28 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Paket extends Model
 {
-    use HasFactory;
+    protected $table = 'pakets';
+    
+    protected $fillable = [
+        'nama_paket',
+        'jenis',
+        'kategori',
+        'jumlah_pax',
+        'harga_paket',
+        'deskripsi',
+        'foto1',
+        'foto2',
+        'foto3',
+    ];
 
-    protected $guarded = ['id'];
-
-    public function detailPemesanans()
-    {
-        return $this->hasMany(DetailPemesanan::class, 'id_paket');
-    }
-
+    // ✅ HANYA SATU RELASI INI (hapus yang duplikat)
     public function pemesanans()
     {
-        return $this->belongsToMany(
-            Pemesanan::class,
-            'detail_pemesanans',
-            'id_paket',
-            'id_pemesanan'
-        );
+        return $this->belongsToMany(Pemesanan::class, 'detail_pemesanans', 'id_paket', 'id_pemesanan')
+                    ->withPivot('subtotal');
     }
-
 }

@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pengiriman extends Model
 {
-    // ✅ PENTING: Nama tabel di database adalah 'pengirimans' (plural)
     protected $table = 'pengirimans';
-
+    
     protected $fillable = [
         'id_pemesanan',
         'id_user',

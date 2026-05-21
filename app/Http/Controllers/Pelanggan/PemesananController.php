@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Pemesanan;
 use App\Models\Paket;
 use App\Models\JenisPembayaran;
-use App\Models\Pelanggan;
+use App\Models\DetailPemesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class PemesananController extends Controller
 {
+    // Form order
     public function create()
     {
         $pakets = Paket::all();
@@ -20,9 +21,9 @@ class PemesananController extends Controller
         return view('pelanggan.pemesanan.create', compact('pakets', 'methods'));
     }
 
+    // Process order
     public function store(Request $request)
     {
-        // 1. Validasi
         $validated = $request->validate([
             'paket_id' => 'required|exists:pakets,id',
             'jumlah_pax' => 'required|integer|min:1',
@@ -32,63 +33,62 @@ class PemesananController extends Controller
             'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        // 2. Cek user login (harus pelanggan)
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
-        }
+        if (!Auth::check()) return redirect()->route('login');
 
         $pelanggan = Auth::user();
         $paket = Paket::findOrFail($request->paket_id);
-
-        // 3. Hitung total
-        $total = $paket->harga_paket * $request->jumlah_pax;
+        $subtotal = $paket->harga_paket * $request->jumlah_pax;
 
         DB::beginTransaction();
         try {
-            // 4. Simpan ke tabel pemesanans
+            // Simpan ke pemesanans (Master)
             $pemesanan = Pemesanan::create([
                 'id_pelanggan' => $pelanggan->id,
                 'id_jenis_bayar' => $request->metode_bayar,
+                'no_resi' => 'RESI-' . strtoupper(uniqid()),
                 'tgl_pesan' => now(),
                 'status_pesan' => 'Menunggu Konfirmasi',
-                'total_bayar' => $total,
-                'no_resi' => 'RESI-' . strtoupper(uniqid()),
-                'alamat1' => $request->alamat1,
-                'tgl_acara' => $request->tgl_acara,
+                'total_bayar' => $subtotal,
             ]);
 
-            // 5. Handle upload bukti bayar
+            // Simpan ke detail_pemesanans (Detail)
+            DetailPemesanan::create([
+                'id_pemesanan' => $pemesanan->id,
+                'id_paket' => $paket->id,
+                'subtotal' => $subtotal,
+            ]);
+
+            // Upload bukti bayar
             if ($request->hasFile('bukti_bayar')) {
                 $path = $request->file('bukti_bayar')->store('bukti-bayar', 'public');
-                $pemesanan->update(['bukti_bayar' => $path]);
+                // Kalau tabel pemesanans punya kolom bukti_bayar:
+                // $pemesanan->update(['bukti_bayar' => $path]);
             }
 
             DB::commit();
-
-            return redirect()->route('pelanggan.riwayat')
-                ->with('success', 'Pesanan berhasil dibuat!');
+            return redirect()->route('pelanggan.riwayat')->with('success', 'Pesanan berhasil!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
 
+    // Riwayat pesanan pelanggan
     public function riwayat()
     {
         $pemesanans = Pemesanan::where('id_pelanggan', Auth::id())
-            ->with('paket')
+            ->with(['pakets', 'jenisPembayaran'])
             ->latest()
             ->paginate(10);
-
         return view('pelanggan.pemesanan.riwayat', compact('pemesanans'));
     }
 
+    // Detail pesanan
     public function show($id)
     {
-        $pemesanan = Pemesanan::with(['paket', 'pelanggan'])
+        $pemesanan = Pemesanan::with(['pakets', 'jenisPembayaran', 'details'])
             ->where('id_pelanggan', Auth::id())
             ->findOrFail($id);
-
         return view('pelanggan.pemesanan.show', compact('pemesanan'));
     }
 }

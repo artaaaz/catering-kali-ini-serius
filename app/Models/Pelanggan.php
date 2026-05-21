@@ -16,6 +16,14 @@ class Pelanggan extends Authenticatable
         'password',
     ];
 
+    protected $guard = 'pelanggan';
+    
+    protected $fillable = [
+        'nama_pelanggan',
+        'email',
+        'password',
+    ]; 
+
     public function pemesanans()
     {
         return $this->hasMany(Pemesanan::class, 'id_pelanggan');
