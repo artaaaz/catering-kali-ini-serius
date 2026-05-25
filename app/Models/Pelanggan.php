@@ -17,12 +17,12 @@ class Pelanggan extends Authenticatable
     ];
 
     protected $guard = 'pelanggan';
-    
+
     protected $fillable = [
         'nama_pelanggan',
         'email',
         'password',
-    ]; 
+    ];
 
     public function pemesanans()
     {
